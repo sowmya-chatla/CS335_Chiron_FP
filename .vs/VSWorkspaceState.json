@@ -1,4 +1,8 @@
 {
-  "ExpandedNodes": [],
+  "ExpandedNodes": [
+    "",
+    "\\ChironCore"
+  ],
+  "SelectedNode": "\\ChironCore\\fuzzer.py",
   "PreviewInSolutionExplorer": false
 }

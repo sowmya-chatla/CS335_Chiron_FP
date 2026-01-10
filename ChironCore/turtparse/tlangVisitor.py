@@ -1,6 +1,6 @@
-# Generated from tlang.g4 by ANTLR 4.7.2
+# Generated from tlang.g4 by ANTLR 4.13.2
 from antlr4 import *
-if __name__ is not None and "." in __name__:
+if "." in __name__:
     from .tlangParser import tlangParser
 else:
     from tlangParser import tlangParser

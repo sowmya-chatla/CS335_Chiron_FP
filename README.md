@@ -41,7 +41,9 @@ If you want to cite this work, you may use this.
 ### Installing Dependencies
 
 ```bash
-$ pip install antlr4-python3-runtime==4.7.2 networkx z3-solver numpy 
+$ pip install antlr4-python3-runtime==4.13.2 networkx z3-solver numpy 
+
+# On UNIX/MacOSX platform, run this. On Windows (10/11) not required.
 $ sudo apt-get install python3-tk
 ```
 
@@ -52,8 +54,7 @@ We use a visitor pattern to generate the AST from parsing.
 
 ```
 $ cd ChironCore/turtparse
-$ java -cp ../extlib/antlr-4.7.2-complete.jar org.antlr.v4.Tool \
-  -Dlanguage=Python3 -visitor -no-listener tlang.g4
+$ java -cp ../extlib/antlr-4.13.2-complete.jar org.antlr.v4.Tool -Dlanguage=Python3 -visitor -no-listener tlang.g4
 ```
 
 ### Running an example
