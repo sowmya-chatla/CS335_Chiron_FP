@@ -7,6 +7,7 @@ from ChironAST.builder import astGenPass
 import abstractInterpretation as AI
 import dataFlowAnalysis as DFA
 from sbfl import testsuiteGenerator
+from lazyValue import EvalTrace
 
 sys.path.insert(0, "../Submission/")
 sys.path.insert(0, "ChironAST/")
@@ -65,6 +66,18 @@ if __name__ == "__main__":
         "--run",
         action="store_true",
         help="execute Chiron program, the figure/shapes the turle draws is shown in a UI.",
+    )
+    cmdparser.add_argument(
+        "-l",
+        "--lazy",
+        action="store_true",
+        help="execute Chiron program using lazy evaluation with memoization.",
+    )
+    cmdparser.add_argument(
+        "-cmp",
+        "--compare",
+        action="store_true",
+        help="run the same program under both eager and lazy modes and print an evaluation comparison.",
     )
 
     cmdparser.add_argument(
@@ -275,19 +288,65 @@ if __name__ == "__main__":
         print(f"Coverage : {cov.total_metric},\nCorpus:")
         for index, x in enumerate(corpus):
             print(f"\tInput {index} : {x.data}")
+    
+    # Run interpreter helper
+    def run_interpreter(interp_class, irHandler, args, label=""):
+        interp = interp_class(irHandler, args)
+        interp.verbose = True
 
-    if args.run:
-        # for stmt,pc in ir:
-        #     print(str(stmt.__class__.__bases__[0].__name__),pc)
+        interp.initProgramContext(args.params)
 
-        inptr = ConcreteInterpreter(irHandler, args)
-        terminated = False
-        inptr.initProgramContext(args.params)
         while True:
-            terminated = inptr.interpret()
-            if terminated:
+            if interp.interpret():
                 break
-        print("Program Ended.")
+
+        print(f"[{label}] Program Ended.")
+
+        return interp
+    
+    # Rebuild IR helper
+    def rebuild_ir(irHandler, args):
+        if not args.bin:
+            parseTree = getParseTree(args.progfl)
+            astgen = astGenPass()
+            ir = astgen.visitStart(parseTree)
+            irHandler.setIR(ir)
+
+    if args.run or args.lazy or args.compare:
+        if args.compare:
+            print("=" * 50)
+            print("EAGER MODE")
+            print("=" * 50)
+
+            run_interpreter(ConcreteInterpreter, irHandler, args, "Eager")
+
+            rebuild_ir(irHandler, args)
+
+            print("=" * 50)
+            print("LAZY MODE")
+            print("=" * 50)
+
+            lazy_trace = EvalTrace()
+
+            lazy_interp = LazyInterpreter(irHandler, args)
+            lazy_interp.trace = lazy_trace
+            lazy_interp.verbose = True
+
+            lazy_interp.initProgramContext(args.params)
+
+            while True:
+                if lazy_interp.interpret():
+                    break
+
+            print("[Lazy] Program Ended.")
+            lazy_trace.report()
+   
+        elif args.lazy:
+            run_interpreter(LazyInterpreter, irHandler, args, "Lazy")
+
+        else:
+            run_interpreter(ConcreteInterpreter, irHandler, args, "Eager")
+        
         print()
         print("Press ESCAPE to exit")
         turtle.listen()
