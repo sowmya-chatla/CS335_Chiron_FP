@@ -172,3 +172,45 @@ class astGenPass(tlangVisitor):
 
     def visitPenCommand(self, ctx:tlangParser.PenCommandContext):
         return [(ChironAST.PenCommand(ctx.getText()), 1)]
+
+    def visitMatchCommand(self, ctx: tlangParser.MatchCommandContext):
+        match_val = self.visit(ctx.value())
+        cases = ctx.strict_mlist().matchCase()
+
+        final_instrs = []
+
+        for case in cases:
+
+            if case.variableCase():
+                vcase = case.variableCase()
+                varname = vcase.NAME().getText()
+
+                assign = ChironAST.AssignmentCommand(ChironAST.Var(varname), match_val)
+
+                body = self.visit(vcase.strict_ilist())
+                cond_expr = self.visit(vcase.condition()) if vcase.condition() else ChironAST.BoolTrue()
+                condObj = ChironAST.ConditionCommand(cond_expr)
+
+                block = [(assign, 1), (condObj, len(body) + 1)] + body
+
+            else:
+                scase = case.simpleCase()
+                body = self.visit(scase.strict_ilist())
+                
+                if scase.NUM():
+                    cond_expr = ChironAST.EQ(match_val, ChironAST.Num(scase.NUM().getText()))
+                    condObj = ChironAST.ConditionCommand(cond_expr)
+                    block = [(condObj, len(body) + 1)] + body
+
+                else:
+                    block = body
+
+            final_instrs.extend(block)
+            final_instrs.append((ChironAST.ConditionCommand(ChironAST.BoolFalse()), None))
+
+        total = len(final_instrs)
+        for i, (instr, offset) in enumerate(final_instrs):
+            if offset is None:
+                final_instrs[i] = (instr, total - i)
+
+        return final_instrs

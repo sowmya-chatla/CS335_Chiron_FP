@@ -79,6 +79,31 @@ class tlangVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by tlangParser#matchCommand.
+    def visitMatchCommand(self, ctx:tlangParser.MatchCommandContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by tlangParser#strict_mlist.
+    def visitStrict_mlist(self, ctx:tlangParser.Strict_mlistContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by tlangParser#matchCase.
+    def visitMatchCase(self, ctx:tlangParser.MatchCaseContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by tlangParser#variableCase.
+    def visitVariableCase(self, ctx:tlangParser.VariableCaseContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by tlangParser#simpleCase.
+    def visitSimpleCase(self, ctx:tlangParser.SimpleCaseContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by tlangParser#unaryExpr.
     def visitUnaryExpr(self, ctx:tlangParser.UnaryExprContext):
         return self.visitChildren(ctx)

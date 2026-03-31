@@ -74,6 +74,38 @@ class PauseCommand(Instruction):
     def __str__(self):
         return "pause"
 
+class MatchCommand(Instruction):
+    def __init__(self, value, cases):
+        self.value = value
+        self.cases = cases 
+
+    def __str__(self):
+        cases_str_rep = " ".join(str(c) for c in self.cases)
+        return "match " + str(self.value) + " [ " + cases_str_rep + " ] "
+    
+class MatchCase():
+    def __init__(self, type, body, value=None, varname=None, condition=None):
+        self.type = type # could be a literal or a variable or a wildcard
+        self.value = value # none if it's not a literal
+        self.varname = varname # for variable case
+        self.condition = condition # for variable case
+        self.body = body # list of instrs 
+
+    def __str__(self):
+        body_str_rep = " ".join(str(instr) for instr in self.body)
+        
+        if self.type == "num":
+            return str(self.value) + " [ " + body_str_rep + " ] "
+        
+        elif self.type == "wildcard":
+            return "_ [ " + body_str_rep + " ] "
+        
+        else:
+            if self.condition:
+                return str(self.varname) + " if " +  " ( " + str(self.condition) + " ) " + " [ " + body_str_rep + " ] "
+            else:
+                return str(self.varname) + " [ " + body_str_rep + " ] "
+            
 class Expression(AST):
     pass
 

@@ -17,6 +17,7 @@ instruction : assignment
 	    | penCommand
 	    | gotoCommand
 	    | pauseCommand
+		| matchCommand 
 	    ;
 
 conditional : ifConditional | ifElseConditional ;
@@ -39,6 +40,24 @@ penCommand : 'penup' | 'pendown' ;
 
 pauseCommand : 'pause' ;
 
+matchCommand : 'match' value '[' strict_mlist ']' ;  
+
+strict_mlist : (matchCase)+
+				 ;
+
+matchCase 
+    : variableCase
+    | simpleCase
+    ;
+
+variableCase
+    : NAME ('if' '(' condition ')')? '[' strict_ilist ']'
+    ;                                             
+
+simpleCase
+    : (NUM | WILDCARD) '[' strict_ilist ']'
+    ;      
+
 expression : 
              unaryArithOp expression               #unaryExpr
            | expression multiplicative expression  #mulExpr
@@ -56,7 +75,6 @@ PLUS     : '+' ;
 MINUS    : '-' ;
 MUL  	 : '*' ;
 DIV      : '/' ;
-
 
 // TODO :
 // procedure_declaration : 'to' NAME (VAR)+ strict_ilist 'end' ;
@@ -85,8 +103,11 @@ AND: '&&';
 OR : '||';
 NOT: '!' ;
 
+WILDCARD : '_';
+
 value : NUM
       | VAR
+	  | NAME
       ;
 
 NUM  : [0-9]+        ;
