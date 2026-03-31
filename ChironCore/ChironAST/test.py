@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(".."))
 from antlr4 import *
 from turtparse.tlangLexer import tlangLexer
 from turtparse.tlangParser import tlangParser
-from builder import astGenPass   # your builder
+from builder import astGenPass   
 
 def test_input(input_text):
     input_stream = InputStream(input_text)
