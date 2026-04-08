@@ -191,7 +191,7 @@ class astGenPass(tlangVisitor):
                 cond_expr = self.visit(vcase.condition()) if vcase.condition() else ChironAST.BoolTrue()
                 condObj = ChironAST.ConditionCommand(cond_expr)
 
-                block = [(assign, 1), (condObj, len(body) + 1)] + body
+                block = [(assign, 1), (condObj, len(body) + 2)] + body
 
             else:
                 scase = case.simpleCase()
@@ -200,7 +200,7 @@ class astGenPass(tlangVisitor):
                 if scase.NUM():
                     cond_expr = ChironAST.EQ(match_val, ChironAST.Num(scase.NUM().getText()))
                     condObj = ChironAST.ConditionCommand(cond_expr)
-                    block = [(condObj, len(body) + 1)] + body
+                    block = [(condObj, len(body) + 2)] + body
 
                 else:
                     block = body
